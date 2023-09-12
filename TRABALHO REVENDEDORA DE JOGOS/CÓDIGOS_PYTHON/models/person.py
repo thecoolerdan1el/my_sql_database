@@ -5,6 +5,7 @@ from sqlalchemy.dialects.mysql import MEDIUMINT
 from datetime import date
 
 class Person(Base):
+    
     __tablename__="person"
 
     id_person: Mapped[int] = mapped_column(MEDIUMINT(unsigned=True),

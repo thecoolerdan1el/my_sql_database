@@ -1,8 +1,7 @@
 from models import Base, Site
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import VARCHAR, DATE, ForeignKey, INT
+from sqlalchemy import VARCHAR, ForeignKey, INT
 from sqlalchemy.dialects.mysql import MEDIUMINT
-from datetime import date
 
 
 class Midia(Base):
