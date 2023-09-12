@@ -29,8 +29,8 @@ from models.midias_site import Midia
 from models.person import Person 
 from models.client import Client
 from models.order import Order
-from models.items_order_details import Items_Order
 from models.product_details import Product
+from models.items_order_details import Items_Order
 from models.employee_details import Employee
 from models.payment_method import Payment_Method
 from models.bank_details import Bank_Details

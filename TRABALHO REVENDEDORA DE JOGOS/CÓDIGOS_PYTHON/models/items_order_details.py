@@ -1,4 +1,4 @@
-from models import Base
+from models import Base, Product
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import INT, ForeignKey, DECIMAL
 
@@ -14,5 +14,5 @@ class Items_Order(Base):
                                                 unique=True,
                                                 nullable=True)
     product_value: Mapped[int] = mapped_column(DECIMAL(8.2), nullable=False)
-    
+    product_id: Mapped[int] = mapped_column(INT, ForeignKey(Product.product_id))
     

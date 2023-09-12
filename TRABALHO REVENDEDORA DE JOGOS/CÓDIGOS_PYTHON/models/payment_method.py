@@ -1,4 +1,4 @@
-from models import Base
+from models import Base, Order
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import VARCHAR, INT, ForeignKey
 class Payment_Method(Base):
@@ -7,4 +7,4 @@ class Payment_Method(Base):
     code: Mapped[int] = mapped_column(INT, nullable=False, unique=True,
                                       primary_key=True)
     name: Mapped[str] = mapped_column(VARCHAR(45), nullable=False)
-    shopping_cart_id_cart: Mapped[int] = mapped_column(INT)
+    id_order: Mapped[str] = mapped_column(INT, ForeignKey(Order.id_order))
