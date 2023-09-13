@@ -8,7 +8,7 @@ class Site(Base):
 
     cnpj: Mapped[int] = mapped_column(MEDIUMINT(14), 
                                       unique=True, 
-                                      primary_key=True)
+                                      primary_key=True, nullable=False)
     adress: Mapped[str] = mapped_column(VARCHAR(50), nullable=False)
     trading_name: Mapped[str] = mapped_column(VARCHAR(30), nullable=False)
     company_name: Mapped[str] = mapped_column(VARCHAR(45), nullable=False)
