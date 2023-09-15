@@ -3,6 +3,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import VARCHAR, DATETIME, ForeignKey, INT
 from sqlalchemy.dialects.mysql import MEDIUMINT
 
+# from datetime import date 
+# possível erro com import de variáveis
 class Payment_Employee(Base):
 
     __tablename__ = "payment_employee"
