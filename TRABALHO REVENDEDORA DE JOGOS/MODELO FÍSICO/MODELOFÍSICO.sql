@@ -7,7 +7,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema revendedora_jogos
 -- -----------------------------------------------------
-
+DROP SCHEMA IF EXISTS `revendedora_jogos`;
 -- -----------------------------------------------------
 -- Schema revendedora_jogos
 -- -----------------------------------------------------
@@ -33,12 +33,12 @@ ENGINE = InnoDB;
 -- Table `revendedora_jogos`.`person`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `revendedora_jogos`.`person` (
-  `id_person` MEDIUMINT NOT NULL AUTO_INCREMENT,
+  `id_person` INT NOT NULL AUTO_INCREMENT,
   `phone_number` VARCHAR(15) NOT NULL,
   `name` VARCHAR(60) NOT NULL,
   `email` VARCHAR(45) NOT NULL,
   `birth_date` DATE NOT NULL,
-  `CNPJ` INT NOT NULL,
+  `CNPJ` MEDIUMINT(14) UNSIGNED NOT NULL,
   PRIMARY KEY (`id_person`),
   INDEX `fk_person_site_idx` (`CNPJ` ASC) VISIBLE,
   UNIQUE INDEX `id_person_UNIQUE` (`id_person` ASC) VISIBLE,
@@ -87,8 +87,7 @@ CREATE TABLE IF NOT EXISTS `revendedora_jogos`.`midia` (
   `image` BLOB NOT NULL,
   `videos` BLOB NOT NULL,
   `documents` BLOB NOT NULL,
-  `site_CNPJ` VARCHAR(14) NOT NULL,
-  UNIQUE INDEX `documents_UNIQUE` (`documents` ASC) VISIBLE,
+  `site_CNPJ` MEDIUMINT(14) UNSIGNED NOT NULL,
   INDEX `fk_midia_site1_idx` (`site_CNPJ` ASC) VISIBLE,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
