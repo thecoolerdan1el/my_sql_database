@@ -7,7 +7,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema revendedora_jogos
 -- -----------------------------------------------------
-
+DROP SCHEMA IF EXISTS `revendedora_jogos`;
 -- -----------------------------------------------------
 -- Schema revendedora_jogos
 -- -----------------------------------------------------
@@ -17,6 +17,7 @@ USE `revendedora_jogos` ;
 -- -----------------------------------------------------
 -- Table `revendedora_jogos`.`site`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS revendedora_jogos.site;
 CREATE TABLE IF NOT EXISTS `revendedora_jogos`.`site` (
   `CNPJ` MEDIUMINT(14) UNSIGNED NOT NULL,
   `address` VARCHAR(50) NOT NULL,
@@ -26,19 +27,20 @@ CREATE TABLE IF NOT EXISTS `revendedora_jogos`.`site` (
   `email` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`CNPJ`),
   UNIQUE INDEX `CNPJ_UNIQUE` (`CNPJ` ASC) VISIBLE)
-ENGINE = InnoDB;
+;
 
 
 -- -----------------------------------------------------
 -- Table `revendedora_jogos`.`person`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS revendedora_jogos.person;
 CREATE TABLE IF NOT EXISTS `revendedora_jogos`.`person` (
-  `id_person` MEDIUMINT NOT NULL AUTO_INCREMENT,
+  `id_person` INT NOT NULL AUTO_INCREMENT,
   `phone_number` VARCHAR(15) NOT NULL,
   `name` VARCHAR(60) NOT NULL,
   `email` VARCHAR(45) NOT NULL,
   `birth_date` DATE NOT NULL,
-  `CNPJ` INT NOT NULL,
+  `CNPJ` MEDIUMINT(14) UNSIGNED NOT NULL,
   PRIMARY KEY (`id_person`),
   INDEX `fk_person_site_idx` (`CNPJ` ASC) VISIBLE,
   UNIQUE INDEX `id_person_UNIQUE` (`id_person` ASC) VISIBLE,
@@ -48,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `revendedora_jogos`.`person` (
     REFERENCES `revendedora_jogos`.`site` (`CNPJ`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+;
 
 
 -- -----------------------------------------------------
@@ -66,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `revendedora_jogos`.`employee` (
     REFERENCES `revendedora_jogos`.`person` (`id_person`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+;
 
 
 -- -----------------------------------------------------
@@ -76,30 +78,39 @@ CREATE TABLE IF NOT EXISTS `revendedora_jogos`.`game_genre` (
   `id_genre` INT NOT NULL,
   `name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id_genre`))
-ENGINE = InnoDB;
+;
 
 
 -- -----------------------------------------------------
 -- Table `revendedora_jogos`.`midia`
 -- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Table `revendedora_jogos`.`midia`
+-- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `revendedora_jogos`.`midia` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `image` BLOB NOT NULL,
-  `videos` BLOB NOT NULL,
-  `documents` BLOB NOT NULL,
-  `site_CNPJ` VARCHAR(14) NOT NULL,
-  UNIQUE INDEX `documents_UNIQUE` (`documents` ASC) VISIBLE,
-  INDEX `fk_midia_site1_idx` (`site_CNPJ` ASC) VISIBLE,
-  PRIMARY KEY (`id`),
+  `audiovisual` BLOB NOT NULL,
+  `product_id_product` INT NOT NULL,
+  `site_CNPJ` MEDIUMINT(14) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`, `product_id_product`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-  CONSTRAINT `fk_midia_site`
+  INDEX `fk_midia_product1_idx` (`product_id_product` ASC) VISIBLE,
+  INDEX `fk_midia_site1_idx` (`site_CNPJ` ASC) VISIBLE,
+  CONSTRAINT `fk_midia_product1`
+    FOREIGN KEY (`product_id_product`)
+    REFERENCES `revendedora_jogos`.`product` (`id_product`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_midia_site1`
     FOREIGN KEY (`site_CNPJ`)
     REFERENCES `revendedora_jogos`.`site` (`CNPJ`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+    ON UPDATE NO ACTION);
 
 
+-- -----------------------------------------------------
+-- Table `revendedora_jogos`.`product`
+-- -----------------------------------------------------
 -- -----------------------------------------------------
 -- Table `revendedora_jogos`.`product`
 -- -----------------------------------------------------
@@ -108,21 +119,14 @@ CREATE TABLE IF NOT EXISTS `revendedora_jogos`.`product` (
   `name` VARCHAR(50) NOT NULL,
   `description` VARCHAR(200) NOT NULL,
   `id_genre` INT NOT NULL,
-  `midia_id` INT NOT NULL,
-  PRIMARY KEY (`id_product`, `midia_id`),
+  PRIMARY KEY (`id_product`),
   INDEX `fk_product_game_genre1_idx` (`id_genre` ASC) VISIBLE,
-  INDEX `fk_product_midia1_idx` (`midia_id` ASC) VISIBLE,
   CONSTRAINT `fk_product_game_genre1`
     FOREIGN KEY (`id_genre`)
     REFERENCES `revendedora_jogos`.`game_genre` (`id_genre`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_product_midia1`
-    FOREIGN KEY (`midia_id`)
-    REFERENCES `revendedora_jogos`.`midia` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+    ON UPDATE NO ACTION);
+;
 
 
 -- -----------------------------------------------------
@@ -146,7 +150,7 @@ CREATE TABLE IF NOT EXISTS `revendedora_jogos`.`items_order` (
     REFERENCES `revendedora_jogos`.`product` (`id_product`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+;
 
 
 -- -----------------------------------------------------
@@ -164,7 +168,7 @@ CREATE TABLE IF NOT EXISTS `revendedora_jogos`.`order` (
     REFERENCES `revendedora_jogos`.`items_order` (`id_order`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+;
 
 
 -- -----------------------------------------------------
@@ -190,7 +194,8 @@ CREATE TABLE IF NOT EXISTS `revendedora_jogos`.`client` (
     REFERENCES `revendedora_jogos`.`order` (`id_order`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+;
+
 
 
 -- -----------------------------------------------------
@@ -202,25 +207,17 @@ CREATE TABLE IF NOT EXISTS `revendedora_jogos`.`bank_details` (
   `account_num` INT NOT NULL,
   `payment_type` INT NOT NULL,
   `bank_name` VARCHAR(45) NOT NULL,
-  `id_employee` INT NOT NULL,
-  `client_id_client` MEDIUMINT UNSIGNED NOT NULL,
+  `person_id_person` INT NOT NULL,
   UNIQUE INDEX `agency_UNIQUE` (`agency` ASC) VISIBLE,
   UNIQUE INDEX `account_num_UNIQUE` (`account_num` ASC) VISIBLE,
-  INDEX `fk_bank_details_employee1_idx` (`id_employee` ASC) VISIBLE,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-  INDEX `fk_bank_details_client1_idx` (`client_id_client` ASC) VISIBLE,
-  CONSTRAINT `fk_bank_details_employee1`
-    FOREIGN KEY (`id_employee`)
-    REFERENCES `revendedora_jogos`.`employee` (`id_employee`)
+  INDEX `fk_bank_details_person1_idx` (`person_id_person` ASC) VISIBLE,
+  CONSTRAINT `fk_bank_details_person1`
+    FOREIGN KEY (`person_id_person`)
+    REFERENCES `revendedora_jogos`.`person` (`id_person`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_bank_details_client1`
-    FOREIGN KEY (`client_id_client`)
-    REFERENCES `revendedora_jogos`.`client` (`id_client`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+    ON UPDATE NO ACTION);
 
 
 -- -----------------------------------------------------
@@ -238,7 +235,7 @@ CREATE TABLE IF NOT EXISTS `revendedora_jogos`.`payment_method` (
     REFERENCES `revendedora_jogos`.`order` (`id_order`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+;
 
 
 -- -----------------------------------------------------
@@ -259,7 +256,7 @@ CREATE TABLE IF NOT EXISTS `revendedora_jogos`.`payment_employee` (
     REFERENCES `revendedora_jogos`.`employee` (`id_employee`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
